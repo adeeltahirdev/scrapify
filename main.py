@@ -13,6 +13,7 @@ driver = webdriver.Chrome(
 driver.get("https://radstore.pk/")
 
 shops = "site-nav__link"
+product = "grid-product__link"
 
 WebDriverWait(driver, 5).until(
     EC.presence_of_element_located((By.CLASS_NAME, shops))
@@ -20,6 +21,19 @@ WebDriverWait(driver, 5).until(
 
 shop = driver.find_element(By.CLASS_NAME, shops)
 shop.click()
+
+products = WebDriverWait(driver, 20).until(
+    EC.presence_of_all_elements_located((By.CLASS_NAME, product))
+)
+
+i = 1
+
+for p in products:
+    href = p.get_attribute("href")
+    print(f"Link_{i}: {href}")
+    i += 1
+    
+    
 
 time.sleep(10)
 print(driver.title)
