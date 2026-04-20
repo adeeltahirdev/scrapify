@@ -12,3 +12,4 @@ conn = psycopg2.connect(
 
 cur = conn.cursor()
 print('Connection Successful')
+

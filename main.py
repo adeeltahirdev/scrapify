@@ -14,6 +14,10 @@ driver.get("https://radstore.pk/")
 
 shops = "site-nav__link"
 product = "grid-product__link"
+product_name = "product-single__title"
+product_price = "product__price"
+product_original_price = "product__price--compare"
+product_sale_price = "sale-price"
 
 WebDriverWait(driver, 5).until(
     EC.presence_of_element_located((By.CLASS_NAME, shops))
@@ -28,13 +32,40 @@ products = WebDriverWait(driver, 20).until(
 
 i = 1
 
+links = []
+products_data = []
+
 for p in products:
     href = p.get_attribute("href")
-    print(f"Link_{i}: {href}")
+    links.append(href)
     i += 1
     
-    
+print(len(links))
 
-time.sleep(10)
+for link in links:
+    driver.get(link)
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_all_element_located((By.CLASS_NAME, product_name))
+    )
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.CLASS_NAME, product_sale_price))
+    )
+    name = driver.find_element(By.CLASS_NAME, product_name).text
+    if not product_sale_price:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CLASS_NAME, product_price))
+        )
+        price = driver.find_element(By.CLASS_NAME, product_price).text
+    else:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CLASS_NAME, product_sale_price))
+        )
+        price = driver.find_element(By.CLASS_NAME, product_sale_price).text
+    print(name)
+    print(price)
+    print(link)
+
+
+
 print(driver.title)
 driver.quit()
