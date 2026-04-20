@@ -45,7 +45,7 @@ print(len(links))
 for link in links:
     driver.get(link)
     WebDriverWait(driver, 20).until(
-        EC.presence_of_all_element_located((By.CLASS_NAME, product_name))
+        EC.presence_of_element_located((By.CLASS_NAME, product_name))
     )
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.CLASS_NAME, product_sale_price))
@@ -56,16 +56,23 @@ for link in links:
             EC.presence_of_element_located((By.CLASS_NAME, product_price))
         )
         price = driver.find_element(By.CLASS_NAME, product_price).text
+        products_data.append({'Name': name, 'Price': price, 'URL': link})
     else:
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, product_sale_price))
         )
-        price = driver.find_element(By.CLASS_NAME, product_sale_price).text
-    print(name)
-    print(price)
-    print(link)
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CLASS_NAME, product_original_price))
+        )
+        original_price = driver.find_element(By.CLASS_NAME, product_original_price).text
+        sale_price = driver.find_element(By.CLASS_NAME, product_sale_price).text
 
+        products_data.append({'Name': name, 'Original Price': original_price, 'Sale Price': sale_price, 'URL': link})
+    
 
+for data in products_data:
+    print(data)
+    
+print(len(products_data))
 
-print(driver.title)
 driver.quit()
