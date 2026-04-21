@@ -3,7 +3,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 driver = webdriver.Chrome(
     service=Service(
@@ -47,9 +46,9 @@ for c in ctg_links:
         'Link': ctg_href
     })
     
-print(len(categories))
 for ct in categories:
     print(ct)
+print(len(categories))
 
 for item in categories:
     driver.get(item['Link'])
