@@ -18,6 +18,7 @@ product_original_price = "product__price--compare"
 product_sale_price = "sale-price"
 product_price = "product__price"
 ul_tag = "tags--vertical"
+variant = "variant-input"
 
 WebDriverWait(driver, 5).until(
     EC.presence_of_element_located((By.CLASS_NAME, shops))
@@ -92,6 +93,14 @@ for items in links:
 
         final_price = price
         original_price = None
+    
+    variants = []
+    
+    variant_container = driver.find_elements(By.CLASS_NAME, variant)
+    
+    for v in variant_container:
+        value = v.get_attribute("data-value")
+        variants.append(value)
 
 
     products_data.append({
@@ -99,7 +108,8 @@ for items in links:
         'price': final_price,
         'original_price': original_price,
         'url': items['URL'],
-        'category': items['Category']
+        'category': items['Category'],
+        'Variants': variants
     })
         
 for data in products_data:
