@@ -109,6 +109,9 @@ for items in links:
         )
         stock_status = driver.find_element(By.CSS_SELECTOR, f'[{stock}]').text
         
+        if stock_status == '':
+            stock_status = 'out of stock'
+        
         variants.append({
             'variant': value,
             'stock_status': stock_status
