@@ -19,6 +19,7 @@ product_sale_price = "sale-price"
 product_price = "product__price"
 ul_tag = "tags--vertical"
 variant = "variant-input"
+stock = "data-product-inventory"
 
 WebDriverWait(driver, 5).until(
     EC.presence_of_element_located((By.CLASS_NAME, shops))
@@ -100,7 +101,18 @@ for items in links:
     
     for v in variant_container:
         value = v.get_attribute("data-value")
-        variants.append(value)
+        
+        v.click()
+        
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, f'[{stock}]'))
+        )
+        stock_status = driver.find_element(By.CSS_SELECTOR, f'[{stock}]').text
+        
+        variants.append({
+            'variant': value,
+            'stock_status': stock_status
+        })
 
 
     products_data.append({
