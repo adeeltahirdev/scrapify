@@ -20,6 +20,7 @@ product_price = "product__price"
 ul_tag = "tags--vertical"
 variant = "variant-input"
 stock = "data-product-inventory"
+description = "rte"
 
 WebDriverWait(driver, 5).until(
     EC.presence_of_element_located((By.CLASS_NAME, shops))
@@ -116,15 +117,27 @@ for items in links:
             'variant': value,
             'stock_status': stock_status
         })
+        
+    descriptions = ""
+    
+    description_elements = driver.find_elements(By.CLASS_NAME, description)
 
-
+    for desc in description_elements:
+        text = desc.text.strip()
+        if len(text) > 50:
+            descriptions = text
+            break
+            
+    print(descriptions)
+    
     products_data.append({
         'name': name,
         'price': final_price,
         'original_price': original_price,
         'url': items['URL'],
         'category': items['Category'],
-        'Variants': variants
+        'Variants': variants,
+        'Description': descriptions.strip()
     })
         
 for data in products_data:
