@@ -3,7 +3,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from model import get_product_by_url, insert_product, update_product, insert_price, insert_variant, delete_variants, db_close
+from model import get_product_by_url, insert_product, update_product, insert_price, insert_variant, delete_variants, connect_db, create_tables, db_close
+
+
+connect_db()
+create_tables()
 
 driver = webdriver.Chrome(
     service=Service(
