@@ -7,5 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "config>=0.5.1",
     "psycopg2>=2.9.11",
+    "python-dotenv>=1.2.2",
     "selenium>=4.43.0",
 ]
