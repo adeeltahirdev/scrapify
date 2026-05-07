@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from model import get_product_by_url, insert_product, update_product, insert_price, insert_variant, delete_variants, db_close
 
 driver = webdriver.Chrome(
     service=Service(
@@ -139,9 +140,27 @@ for items in links:
         'Variants': variants,
         'Description': descriptions.strip()
     })
+    
+    existing_product = get_product_by_url(items['URL'])
+    
+    if existing_product:
+        product_id = existing_product[0]
+        update_product(product_id, name, descriptions.strip(), items['Category'])
+        insert_price(product_id, final_price, original_price)
+        delete_variants(product_id)
         
+        for variant in variants:
+            insert_variant(product_id, variant['variant'], variant['stock_status'])
+    else:
+        product_id = insert_product(name, items['URL'], descriptions.strip(), items['Category'])
+        insert_price(product_id, final_price, original_price)
+        
+        for variant in variants:
+            insert_variant(product_id, variant['variant'], variant['stock_status'])
+    
 for data in products_data:
     print(data)
 print(len(products_data))
         
 driver.quit()
+db_close()
