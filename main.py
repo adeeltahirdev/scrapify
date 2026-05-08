@@ -127,11 +127,12 @@ for items in links:
     
     description_elements = driver.find_elements(By.CLASS_NAME, description)
 
-    for desc in description_elements:
-        text = desc.text.strip()
-        if len(text) > 50:
-            descriptions = text
+    for desc in description_elements: 
+        text = desc.text.strip() 
+        if len(text) > 50: 
+            descriptions = text 
             break
+        
             
     print(descriptions)
     
@@ -142,25 +143,25 @@ for items in links:
         'url': items['URL'],
         'category': items['Category'],
         'Variants': variants,
-        'Description': descriptions.strip()
+        'Description': descriptions
     })
     
     existing_product = get_product_by_url(items['URL'])
     
     if existing_product:
         product_id = existing_product[0]
-        update_product(product_id, name, descriptions.strip(), items['Category'])
+        update_product(product_id, name, descriptions, items['Category'])
         insert_price(product_id, final_price, original_price)
         delete_variants(product_id)
         
-        for variant in variants:
-            insert_variant(product_id, variant['variant'], variant['stock_status'])
+        for var in variants:
+            insert_variant(product_id, var['variant'], var['stock_status'])
     else:
-        product_id = insert_product(name, items['URL'], descriptions.strip(), items['Category'])
+        product_id = insert_product(name, items['URL'], descriptions, items['Category'])
         insert_price(product_id, final_price, original_price)
         
-        for variant in variants:
-            insert_variant(product_id, variant['variant'], variant['stock_status'])
+        for var in variants:
+            insert_variant(product_id, var['variant'], var['stock_status'])
     
 for data in products_data:
     print(data)

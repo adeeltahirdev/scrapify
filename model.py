@@ -57,8 +57,6 @@ def create_tables():
 
     conn.commit()
     print('Tables created successfully')
-    
-create_tables()
 
 
 def get_product_by_url(url):
