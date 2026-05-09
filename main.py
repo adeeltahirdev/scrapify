@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from model import get_product_by_url, insert_product, update_product, insert_price, insert_variant, delete_variants, connect_db, create_tables, db_close
+import time
 
 
 connect_db()
@@ -14,6 +15,9 @@ driver = webdriver.Chrome(
         executable_path="./chromedriver"
     )
 )
+
+driver.set_page_load_timeout(300)
+
 driver.get("https://radstore.pk/")
 
 shops = "site-nav__link"
@@ -53,10 +57,7 @@ for c in ctg_links:
         'Category': ctg_name,
         'Link': ctg_href
     })
-    
-for ct in categories:
-    print(ct)
-print(len(categories))
+
 
 for item in categories:
     driver.get(item['Link'])
@@ -72,12 +73,11 @@ for item in categories:
             'Category': item['Category']
         })
 
-for l in links:
-    print(f"Product_Links: {l}")
-print(len(links))
-
 for items in links:
     driver.get(items['URL'])
+    
+    time.sleep(1)
+    
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.CLASS_NAME, product_name))
     )
@@ -132,9 +132,6 @@ for items in links:
         if len(text) > 50: 
             descriptions = text 
             break
-        
-            
-    print(descriptions)
     
     products_data.append({
         'name': name,
@@ -163,9 +160,6 @@ for items in links:
         for var in variants:
             insert_variant(product_id, var['variant'], var['stock_status'])
     
-for data in products_data:
-    print(data)
-print(len(products_data))
         
 driver.quit()
 db_close()

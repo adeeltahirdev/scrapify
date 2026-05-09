@@ -17,7 +17,6 @@ def connect_db():
 
 conn = connect_db()
 cur = conn.cursor()
-print('Connection Successful')
 
 def create_tables():
     cur.execute('''
@@ -56,7 +55,6 @@ def create_tables():
                 ''')
 
     conn.commit()
-    print('Tables created successfully')
 
 
 def get_product_by_url(url):
