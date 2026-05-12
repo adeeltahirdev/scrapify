@@ -24,6 +24,10 @@ def scrape_surteez():
     category = "list-collections-section__container"
     product_link_class = "product__media__holder"
     product_name = "product__title"
+    sale = "product__price--regular"
+    orgnl_price = "product__price--compare"
+    variant = ".select-popout__option"
+    description_class = "product__description"
 
     try:
         WebDriverWait(driver, 15).until(
@@ -93,11 +97,57 @@ def scrape_surteez():
         )
         
         name = driver.find_element(By.CLASS_NAME, product_name).text
+        
+        try:
+            sale_price = driver.find_element(
+                By.CLASS_NAME,
+                "product__price--regular"
+            ).text.strip()
+
+            try:
+                original_price = driver.find_element(
+                    By.CLASS_NAME,
+                    "product__price--compare"
+                ).text.strip()
+            except:
+                original_price = None
+
+        except:
+            sale_price = driver.find_element(
+                By.CLASS_NAME,
+                "product__price"
+            ).text.strip()
+
+            original_price = None
+            
+        variant_elements = driver.find_elements(By.CSS_SELECTOR, variant)
+        
+        variants = []
+        
+        for v in variant_elements:
+            variant_name = v.get_attribute("data-value")
+            classes = v.get_attribute("class")
+            
+            if "unavailable" in classes:
+                stock_status = "out of stock"
+            else:
+                stock_status = "in stock"
+                
+            variants.append({
+                'Variant': variant_name,
+                'stock_status': stock_status
+            })
+            
+        description = driver.find_element(By.CLASS_NAME, description_class).text.strip()
 
         product_data.append({
             'Name': name,
             'URL': item['URL'],
-            'Category': item['Category']
+            'Category': item['Category'],
+            'Price': sale_price,
+            'Original Price': original_price,
+            'Variants': variants,
+            'Description': description
         })
         
     for c in categories:
