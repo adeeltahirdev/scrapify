@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from model import get_product_by_url, insert_product, update_product, insert_price, insert_variant, delete_variants
 import time
+import random
 
 
 def scrape_radstore():
@@ -74,7 +75,7 @@ def scrape_radstore():
     for items in links:
         driver.get(items['URL'])
         
-        time.sleep(1)
+        time.sleep(random.uniform(2,4))
         
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, product_name))
