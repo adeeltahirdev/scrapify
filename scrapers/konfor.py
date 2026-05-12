@@ -20,6 +20,7 @@ def scrape_konfor():
     
     
     category_id = "t4s-nav-ul"
+    product_link_class = "t4s-full-width-link"
     
     WebDriverWait(driver, 15).until(
         EC.presence_of_element_located((By.ID, category_id))
@@ -30,8 +31,9 @@ def scrape_konfor():
     category_links = category_element.find_elements(By.TAG_NAME, "a")
     
     categories = []
+    links = []
     
-    for item in category_links:
+    for item in category_links[:8]:
         category_name = item.get_attribute("textContent").strip()
         category_href = item.get_attribute("href")
         
@@ -39,10 +41,29 @@ def scrape_konfor():
             'Category': category_name,
             'Link': category_href
         })
+        
+    for link in categories:
+        driver.get(link['Link'])
+        
+        time.sleep(random.uniform(2, 4))
+        
+        products = WebDriverWait(driver, 20).until(
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.t4s-full-width-link[href]"))
+        )
+        
+        for p in products:
+            product_link = p.get_attribute("href")
+            links.append({
+                'URL': product_link,
+                'Category': link['Category']
+            })
     
     for c in categories:
         print(c)
     print(f'Total Categories: {len(categories)}')
     
+    for l in links:
+        print(l)
+    print(f'Total Product Links: {len(links)}')
     
     driver.quit()
