@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from model import get_product_by_url, insert_product, update_product, insert_price, insert_variant, delete_variants
 import time
 import random
 
@@ -104,6 +105,23 @@ def scrape_konfor():
             'Variants': variants,
             'Description': description
         })
+        
+        existing_product = get_product_by_url(item['URL'])
+        
+        if existing_product:
+            product_id = existing_product[0]
+            update_product(product_id, name, description, item['Category'])
+            insert_price(product_id, sale_price, original_price)
+            delete_variants(product_id)
+            
+            for var in variants:
+                insert_variant(product_id, var['variant'], var['stock_status'])
+        else:
+            product_id = insert_product(name, item['URL'], description, item['Category'])
+            insert_price(product_id, sale_price, original_price)
+            
+            for var in variants:
+                insert_variant(product_id, var['variant'], var['stock_status'])
     
     for c in categories:
         print(c)
