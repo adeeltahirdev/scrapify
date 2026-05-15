@@ -1,29 +1,41 @@
 # Scrapify
 
-A Python-based web scraper built with Selenium and Postgre to scrape product data from an e-commerce website and store it in a relational database.
+A Python-based web scraping system built with Selenium and Postgre to scrape product data from multiple e-commerce websites and store it in a relational database.
 
-## Features
+Currently supported stores:
 
-- Scrapes product categories
-- Scrapes product URLs
-- Scrapes product names
-- Scrapes sale and original prices
-- Scrapes product variants
-- Tracks stock status for each variant
-- Scrapes product descriptions
-- Stores product data in Postgre
-- Updates existing products automatically
-- Maintains price history over time
+- RadStore
+- Konfor
+- Surteez
+
+---
+
+# Features
+
+* Multi-store scraping architecture
+* Scrapes product categories
+* Scrapes product URLs
+* Scrapes product names
+* Scrapes sale and original prices
+* Scrapes product variants
+* Tracks stock status for each variant
+* Scrapes product descriptions
+* Stores product data in Postgre
+* Updates existing products automatically
+* Maintains price history over time
+* Automatic database table creation
+* Centralized scraper runner
+* Error handling with safe database closing
 
 ---
 
 # Technologies Used
 
-- Python
-- Selenium
-- Postgre
-- psycopg2
-- ChromeDriver
+* Python
+* Selenium
+* Postgre
+* psycopg2
+* ChromeDriver
 
 ---
 
@@ -34,9 +46,15 @@ project/
 │
 ├── main.py
 ├── model.py
-├── chromedriver
 ├── requirements.txt
-└── README.md
+├── README.md
+│
+├── scrapers/
+│   ├── radstore.py
+│   ├── konfor.py
+│   └── surteez.py
+│
+└── chromedriver
 ```
 
 ---
@@ -47,15 +65,16 @@ project/
 
 Stores the main product information.
 
-| Column | Type |
-|---|---|
-| id | SERIAL PRIMARY KEY |
-| name | VARCHAR(255) |
-| url | TEXT UNIQUE |
-| description | TEXT |
-| category | VARCHAR(100) |
-| created_at | TIMESTAMP |
-| updated_at | TIMESTAMP |
+| Column      | Type               |
+| ------------ | ------------------ |
+| id          | SERIAL PRIMARY KEY |
+| name        | VARCHAR(255)       |
+| url         |  UNIQUE        |
+| description |                |
+| category    | VARCHAR(100)       |
+| source      | VARCHAR(100)       |
+| created_at  | TIMESTAMP          |
+| updated_at  | TIMESTAMP          |
 
 ---
 
@@ -63,13 +82,13 @@ Stores the main product information.
 
 Stores product price history.
 
-| Column | Type |
-|---|---|
-| id | SERIAL PRIMARY KEY |
-| product_id | INTEGER (FK) |
-| price | VARCHAR(50) |
-| original_price | VARCHAR(50) |
-| scraped_at | TIMESTAMP |
+| Column         | Type               |
+| -------------- | ------------------ |
+| id             | SERIAL PRIMARY KEY |
+| product_id     | INTEGER (FK)       |
+| price          | VARCHAR(50)        |
+| original_price | VARCHAR(50)        |
+| scraped_at     | TIMESTAMP          |
 
 ---
 
@@ -77,12 +96,12 @@ Stores product price history.
 
 Stores variant stock information.
 
-| Column | Type |
-|---|---|
-| id | SERIAL PRIMARY KEY |
-| product_id | INTEGER (FK) |
-| variant_name | VARCHAR(255) |
-| stock_status | VARCHAR(100) |
+| Column       | Type               |
+| ------------ | ------------------ |
+| id           | SERIAL PRIMARY KEY |
+| product_id   | INTEGER (FK)       |
+| variant_name | VARCHAR(255)       |
+| stock_status | VARCHAR(100)       |
 
 ---
 
@@ -100,7 +119,12 @@ cd <project-folder>
 ## 2. Create Virtual Environment
 
 ```
-python3 -m venv .venv
+pytho3 -m venv .venv
+```
+
+OR
+```
+uv venv
 ```
 
 Activate the virtual environment:
@@ -121,13 +145,16 @@ source .venv/bin/activate
 
 ## 3. Install Dependencies
 
-```
-pip install selenium psycopg2
-```
-OR
+Install all required packages:
 
 ```
 pip install -r requirements.txt
+```
+
+Or manually:
+
+```
+pip install selenium psycopg2
 ```
 
 ---
@@ -139,19 +166,19 @@ Install Postgre and create a database user.
 Example:
 
 ```
-Database Name: your-db-name
+Database Name: your-database-name
 Username: your-user-name
-Password: your-db-passsword
+Password: your-password
 ```
 
 ---
 
 # Postgre Access
 
-Login to Postgres:
+Login to Postgre:
 
 ```
-p -h localhost -U <your-user-name> -d <your-database-name>
+p -h localhost -U your-user-name -d yoour-database-name
 ```
 
 ---
@@ -192,43 +219,56 @@ SELECT * FROM variants;
 
 # Running the Scraper
 
-Run the scraper using:
+Run all scrapers using:
 
 ```
-python3 main.py
+python main.py
 ```
 
-The scraper will:
+The system will:
 
-1. Open the RadStore website
-2. Collect categories
-3. Collect product URLs
-4. Visit each product page
-5. Scrape product data
-6. Store data in Postgre
-7. Update existing products automatically
+1. Connect to Postgres
+2. Create tables automatically if they do not exist
+3. Run all store scrapers
+4. Scrape and store product data
+5. Update existing products automatically
+6. Save price history
+7. Close the database connection safely
 
 ---
 
 # Data Flow
 
 ```
-Website → Selenium Scraper → Python → Postgre Database
+E-Commerce Websites
+        ↓
+ Selenium Scrapers
+        ↓
+     Python
+        ↓
+ Postgre Database
 ```
 
 ---
 
 # Notes
 
-- The scraper uses Selenium because the website content is dynamically rendered.
-- Product prices are stored separately to maintain historical tracking.
-- Variants are refreshed on every scrape.
-- Product URLs are used as unique identifiers.
+* Selenium is used because most target websites render content dynamically.
+* Product URLs are used as unique identifiers.
+* Price history is stored separately for tracking price changes over time.
+* Variants are refreshed on every scrape.
+* Database connections are automatically closed even if an error occurs.
 
 ---
 
 # Future Improvements
 
-- Add image scraping
-- Add REST API
-- Add dashboard for analytics
+* Add image scraping
+* Add REST API
+* Add dashboard for analytics
+
+---
+
+# Author
+
+Adeel Tahir
